@@ -37,7 +37,7 @@ function Header() {
         <Button className=" hidden sm:inline rounded-full" color="gray">
           <WbSunny fontSize="small" />
         </Button>
-        <Link to="/signin">
+        <Link to="/signp">
           <Button gradientDuoTone="purpleToBlue">Sign in</Button>
         </Link>
         <Navbar.Toggle />
