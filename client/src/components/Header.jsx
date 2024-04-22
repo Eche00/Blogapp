@@ -38,7 +38,9 @@ function Header() {
           <WbSunny fontSize="small" />
         </Button>
         <Link to="/signp">
-          <Button gradientDuoTone="purpleToBlue">Sign in</Button>
+          <Button gradientDuoTone="purpleToBlue" outline>
+            Sign in
+          </Button>
         </Link>
         <Navbar.Toggle />
       </section>
