@@ -1,13 +1,18 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
+import {
+  signInFaliure,
+  signInStart,
+  signInSuccess,
+} from "../redux/user/userSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 function Signin() {
   const [formD, setFormD] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [errMessage, setErrMessage] = useState(null);
-  console.log(formD);
+  const { loading, error: errorMessage } = useSelector((state) => state.user);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   //adding onchange func to handle formdata from the input
 
   const handleChange = (e) => {
@@ -18,11 +23,10 @@ function Signin() {
     e.preventDefault();
 
     if (!formD.email || !formD.password) {
-      return setErrMessage("Please fill out all fields");
+      return dispatch(signInFaliure("Please fill out all fields"));
     }
     try {
-      setLoading(true);
-      setErrMessage(null);
+      dispatch(signInStart());
       const res = await fetch("/api/auth/signin", {
         method: "POST",
         headers: {
@@ -33,15 +37,15 @@ function Signin() {
 
       const data = await res.json();
       if (data.success === false) {
-        return setErrMessage(data.message);
+        dispatch(signInFaliure(data.message));
       }
-      setLoading(false);
+
       if (res.ok) {
+        dispatch(signInSuccess(data));
         navigate("/");
       }
     } catch (error) {
-      setErrMessage(error.message);
-      setLoading(false);
+      dispatch(signInFaliure(error.message));
     }
   };
   return (
@@ -58,7 +62,7 @@ function Signin() {
             -ßlog
           </Link>
           <p className=" text-sm mt-5 text-black dark:text-white font-semibold">
-            This is a demo project, you can sign up with inactive email and
+            This is a demo project, you can sign in with inactive email and
             password, or with Google...
           </p>
         </div>
@@ -107,9 +111,9 @@ function Signin() {
               </Link>
             </span>
           </div>
-          {errMessage && (
+          {errorMessage && (
             <Alert className=" mt-5  text-sm " color="failure">
-              {errMessage}
+              {errorMessage}
             </Alert>
           )}
         </div>
