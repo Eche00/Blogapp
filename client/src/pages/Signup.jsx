@@ -45,7 +45,7 @@ function Signup() {
     }
   };
   return (
-    <div className=" min-h-screen mt-20">
+    <div className=" min-h-fit mt-20">
       <div className=" flex p-3 max-w-3xl mx-auto md:flex-row flex-col md:items-center gap-5">
         {/*left */}
         <div className=" flex-1">
