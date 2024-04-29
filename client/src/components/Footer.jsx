@@ -53,7 +53,7 @@ function FooterComp() {
                     href="#"
                     target="_blank"
                     rel="noopener noreferrer">
-                    Github <GitHub />
+                    Github <GitHub fontSize="small" />
                   </Footer.Link>
                 </Footer.LinkGroup>
 
@@ -62,7 +62,7 @@ function FooterComp() {
                     href="#"
                     target="_blank"
                     rel="noopener noreferrer">
-                    Instagram <Instagram />
+                    Instagram <Instagram fontSize="small" />
                   </Footer.Link>
                 </Footer.LinkGroup>
               </div>
