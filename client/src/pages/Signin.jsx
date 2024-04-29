@@ -17,7 +17,7 @@ function Signin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formD.username || !formD.email || !formD.password) {
+    if (!formD.email || !formD.password) {
       return setErrMessage("Please fill out all fields");
     }
     try {
@@ -37,7 +37,7 @@ function Signin() {
       }
       setLoading(false);
       if (res.ok) {
-        navigate("/signin");
+        navigate("/");
       }
     } catch (error) {
       setErrMessage(error.message);
@@ -93,7 +93,7 @@ function Signin() {
                   <span className=" pl-3">Loading...</span>
                 </>
               ) : (
-                "Sign Up"
+                "Sign In"
               )}
             </Button>
           </form>
