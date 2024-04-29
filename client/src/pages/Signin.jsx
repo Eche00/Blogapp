@@ -62,7 +62,7 @@ function Signin() {
             -ßlog
           </Link>
           <p className=" text-sm mt-5 text-black dark:text-white font-semibold">
-            This is a demo project, you can sign in with inactive email and
+            This is a demo project, you can sign in with created email and
             password, or with Google...
           </p>
         </div>
