@@ -1,10 +1,12 @@
 import React from "react";
-import { Navbar, TextInput, Button } from "flowbite-react";
+import { Navbar, TextInput, Button, Dropdown, Avatar } from "flowbite-react";
 import { Link, useLocation } from "react-router-dom";
 import { SearchOutlined, WbSunny } from "@mui/icons-material";
+import { useSelector } from "react-redux";
 
 function Header() {
   const path = useLocation().pathname;
+  const { currentUser } = useSelector((state) => state.user);
   return (
     <Navbar className="border border-b-2">
       {/*LOGO*/}
@@ -37,11 +39,29 @@ function Header() {
         <Button className=" hidden sm:inline rounded-full" color="gray">
           <WbSunny fontSize="small" />
         </Button>
-        <Link to="/signup">
-          <Button gradientDuoTone="purpleToBlue" outline>
-            Sign in
-          </Button>
-        </Link>
+        {currentUser ? (
+          <Dropdown
+            arrowIcon={false}
+            inline
+            label={
+              <Avatar alt="user avatar " img={currentUser.avatar} rounded />
+            }>
+            <Dropdown.Header className="truncate font-semibold text-sm">
+              {currentUser.username}
+            </Dropdown.Header>
+            <Link to="/dashboard?tab=profile">
+              <Dropdown.Item>Profile</Dropdown.Item>
+            </Link>
+            <Dropdown.Divider />
+            <Dropdown.Item>Sign out</Dropdown.Item>
+          </Dropdown>
+        ) : (
+          <Link to="/signup">
+            <Button gradientDuoTone="purpleToBlue" outline>
+              Sign in
+            </Button>
+          </Link>
+        )}
         <Navbar.Toggle />
       </section>
       {/*NAVBAR */}
