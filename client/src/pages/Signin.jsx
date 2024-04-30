@@ -7,6 +7,7 @@ import {
   signInSuccess,
 } from "../redux/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
+import Oauth from "./Oauth";
 
 function Signin() {
   const [formD, setFormD] = useState({});
@@ -100,6 +101,7 @@ function Signin() {
                 "Sign In"
               )}
             </Button>
+            <Oauth />
           </form>
           <div>
             <span className=" flex text-sm gap-4 my-5 font-bold dark:text-white">
