@@ -6,11 +6,11 @@ import Footer from "./Footer";
 function Head() {
   return (
     <div className=" flex flex-col  ">
-      <Header />
-      <div className="flex flex-col justify-between  h-screen">
+      <div className="flex flex-col   h-screen">
+        <Header />
         <Outlet />
-        <Footer />
       </div>
+      <Footer />
     </div>
   );
 }

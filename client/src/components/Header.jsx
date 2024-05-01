@@ -1,12 +1,16 @@
 import React from "react";
 import { Navbar, TextInput, Button, Dropdown, Avatar } from "flowbite-react";
 import { Link, useLocation } from "react-router-dom";
-import { SearchOutlined, WbSunny } from "@mui/icons-material";
-import { useSelector } from "react-redux";
+import { SearchOutlined, WbSunny, DarkMode } from "@mui/icons-material";
+import { useSelector, useDispatch } from "react-redux";
+import { toggleTheme } from "../redux/theme/themeSlice";
 
 function Header() {
   const path = useLocation().pathname;
   const { currentUser } = useSelector((state) => state.user);
+  const { theme } = useSelector((state) => state.theme);
+
+  const dispatch = useDispatch();
   return (
     <Navbar className="border border-b-2">
       {/*LOGO*/}
@@ -36,8 +40,15 @@ function Header() {
       {/*MODE & SIGNIN */}
 
       <section className="flex items-center gap-2  md:order-2">
-        <Button className=" hidden sm:inline rounded-full" color="gray">
-          <WbSunny fontSize="small" />
+        <Button
+          className=" hidden sm:inline rounded-full"
+          color="gray"
+          onClick={() => dispatch(toggleTheme())}>
+          {theme === "light" ? (
+            <WbSunny fontSize="small" />
+          ) : (
+            <DarkMode fontSize="small" />
+          )}
         </Button>
         {currentUser ? (
           <Dropdown
