@@ -6,8 +6,8 @@ import Footer from "./Footer";
 function Head() {
   return (
     <div className=" flex flex-col  ">
-      <div className="flex flex-col   h-screen">
-        <Header />
+      <Header />
+      <div className="sm:h-screen h-fit ">
         <Outlet />
       </div>
       <Footer />
