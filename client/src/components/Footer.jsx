@@ -5,7 +5,9 @@ import { GitHub, Instagram, LinkedIn } from "@mui/icons-material";
 
 function FooterComp() {
   return (
-    <Footer container className=" border border-t-8 border-teal-500 mt-32">
+    <Footer
+      container
+      className=" border border-t-8 border-teal-500 mt-32 sm:mt-0">
       <div className=" w-full max-w-7xl mx-auto">
         <div className=" grid w-full justify-between sm:flex md:grid-cols-1">
           {/*logo*/}

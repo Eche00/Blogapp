@@ -5,23 +5,25 @@ import Dashsidebar from "./Dashsidebar";
 
 function Dashboard() {
   const location = useLocation();
-  const [tab, useTab] = useState("");
+  const [tab, setTab] = useState("");
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const tabFromUrl = urlParams.get("tab");
-    console.log(tabFromUrl);
+    if (tabFromUrl) {
+      setTab(tabFromUrl);
+    }
   }, [location.search]);
 
   return (
-    <div className="flex">
+    <div className=" min-h-screen flex flex-col md:flex-row">
       {/* Dashboard */}
 
       {/* ALL PAGE 1 */}
       <Dashsidebar />
 
       {/* ALL PAGE 2 */}
-      <Dashprofile />
+      {tab === "profile" && <Dashprofile />}
     </div>
   );
 }

@@ -8,7 +8,7 @@ function Dashprofile() {
   return (
     <div>
       {" "}
-      <div className="flex flex-col items-center justify-center sm:flex-row max-w-[1500px] mx-auto px-5 md:px-0 sm:py-40 gap-3">
+      <div className="flex flex-col items-center justify-center sm:flex-row max-w-[1500px] mx-auto px-5 md:px-0 sm:py-40 gap-3 ">
         {/* DETAILS SECTION */}
 
         <div className=" flex  flex-col items-center justify-center gap-5 sm:w-[30%] rounded-lg border-[2px] border-gray-400  dark:border-purple-400 px-4 sm:my-0 my-12 pt-24">
