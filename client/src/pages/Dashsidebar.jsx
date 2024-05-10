@@ -30,7 +30,7 @@ function Dashsidebar() {
               </Sidebar.Item>
             </Link>
             <Sidebar.Item icon={Logout} className=" cursor-pointer">
-              Sign up
+              Sign Out
             </Sidebar.Item>
           </Sidebar.ItemGroup>
         </Sidebar.Items>
