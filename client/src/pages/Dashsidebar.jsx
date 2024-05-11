@@ -25,7 +25,8 @@ function Dashsidebar() {
                 active={tab === "profile"}
                 icon={Home}
                 label="User"
-                labelColor="dark">
+                labelColor="dark"
+                as="div">
                 Profile
               </Sidebar.Item>
             </Link>

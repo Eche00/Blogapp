@@ -1,29 +1,144 @@
-import React, { useEffect, useState } from "react";
-import photo from "../assets/react.svg";
-import { Avatar, Button, Label, Spinner, TextInput } from "flowbite-react";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import {
+  Alert,
+  Avatar,
+  Button,
+  Label,
+  Spinner,
+  TextInput,
+} from "flowbite-react";
 import { useSelector } from "react-redux";
 import { Email, More, VerifiedUser, VisibilityOff } from "@mui/icons-material";
+import { app } from "../firebase";
+import { CircularProgressbar } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
 function Dashprofile() {
   const [loading, setLoading] = useState(false);
   const [editp, setEditp] = useState();
+  const [imageF, setImageFile] = useState(null);
+  const [imageFUrl, setImageFileUrl] = useState(null);
+  const [imageFUploading, setImageFUploading] = useState(null);
+  const [imageFError, setImageFError] = useState(null);
+  console.log(imageFUploading, imageFError);
 
   const { currentUser } = useSelector((state) => state.user);
+
+  const avatarRef = useRef(null);
+  // handliing image selecting
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setImageFileUrl(URL.createObjectURL(file));
+    }
+  };
+  // accessing image change only  on edit profile
+  const test = () => {
+    if (editp === true) {
+      avatarRef.current.click();
+    }
+  };
+  // useeffect for showing loaded image on web load
+  useEffect(() => {
+    if (imageF) {
+      uploadImage();
+    }
+  }, [imageF]);
+  // handliing uploading image to firebase
+  const uploadImage = async () => {
+    // service firebase.storage {
+    // match /b/{bucket}/o {
+    // match /{allPaths=**} {
+    // allow read;
+    //allow write: if
+    //request.resource.size < 2 * 1024 * 1024 &&
+    //request.resource.contentType.matches('image/.*')
+    //}
+    //}
+    //}
+    setImageFError(null);
+    const storage = getStorage(app);
+    const fileName = new Date().getTime() + imageF.name;
+    const storageRef = ref(storage, fileName);
+    const uploadTask = uploadBytesResumable(storageRef, imageF);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setImageFUploading(progress.toFixed(0));
+      },
+      (error) => {
+        setImageFError("Could not upload image (file must be less than 2MB)");
+        setImageFUploading(null);
+        setImageFile(null);
+        setImageFileUrl(null);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setImageFileUrl(downloadURL);
+        });
+      }
+    );
+  };
+
   return (
     <div className=" w-full">
-      <h1 className=" text-center  text-3xl font-serif sm:pt-10 pt-5">
+      <h1 className=" text-center  text-3xl font-serif sm:pt-10 pt-5 font-bold">
         PROFILE
       </h1>{" "}
       <div className="flex flex-col items-center justify-center sm:flex-row max-w-7xl mx-auto px-5 md:px-0 sm:py-20 gap-3 ">
         {/* DETAILS SECTION */}
         <div className=" flex sm:w-[400px]  flex-col  gap-5  rounded-lg border-[2px] border-gray-400  dark:border-purple-400 px-4 sm:my-0 my-12 pt-24">
-          <div className=" w-full flex items-center justify-center">
+          <div className=" w-full flex items-center justify-center flex-col relative ">
             {" "}
-            <Avatar
-              size="xl"
-              className="bg-black rounded-full my-3  object-center w-fit overflow-hidden object-cover border-8 dark:border-purple-400 border-gray-400"
-              img={currentUser.avatar}
-            />
+            <div
+              className={` w-fit border-8 dark:border-purple-400 border-gray-400 rounded-full overflow-hidden object-center ${
+                editp === true && "cursor-pointer"
+              }`}
+              onClick={() => test()}>
+              {imageFUploading && (
+                <CircularProgressbar
+                  className=" w-fit z-10"
+                  value={imageFUploading || 0}
+                  text={`${imageFUploading}%`}
+                  strokeWidth={5}
+                  styles={{
+                    root: {
+                      width: "100%",
+                      height: "100%",
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                    },
+                    path: {
+                      stroke: `rgba(62,152,199,${imageFUploading / 100})`,
+                    },
+                  }}
+                />
+              )}
+              <Avatar
+                size="xl"
+                rounded
+                className={` object-fill ${
+                  imageFUploading && imageFUploading < 100 && "opacity-60"
+                } `}
+                img={imageFUrl || currentUser.avatar}
+              />
+            </div>
+            {imageFError && (
+              <Alert color="failure" className="my-2 ">
+                {imageFError}
+              </Alert>
+            )}
           </div>
           <div className=" flex flex-col gap-3">
             <p className=" text-3xl font-semibold  font-serif">
@@ -66,9 +181,21 @@ function Dashprofile() {
         {editp && (
           <div className="flex flex-1 w-full sm:py-0 py-10">
             <form className=" flex flex-col gap-4 w-full">
-              <h1 className=" text-center font-semibold text-lg pb-2">
+              <h1 className=" text-center text-2xl font-semibold  font-serif pb-2 ">
                 Edit Profile
               </h1>
+              <div>
+                <p className=" text-sm  font-bold">
+                  Click profile picture to select image..
+                </p>
+                <input
+                  ref={avatarRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </div>
               <div>
                 <Label value="Username" />
                 <TextInput
