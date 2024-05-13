@@ -13,22 +13,31 @@ import {
   Spinner,
   TextInput,
 } from "flowbite-react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Email, More, VerifiedUser, VisibilityOff } from "@mui/icons-material";
 import { app } from "../firebase";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import {
+  updateUserStart,
+  updateUserFaliure,
+  updateUserSuccess,
+} from "../redux/user/userSlice";
 
 function Dashprofile() {
   const [loading, setLoading] = useState(false);
+  const [updateUserS, setUpdateUserS] = useState(null);
+  const [updateUserErr, setUpdateUserErr] = useState(null);
+
   const [editp, setEditp] = useState();
   const [imageF, setImageFile] = useState(null);
   const [imageFUrl, setImageFileUrl] = useState(null);
   const [imageFUploading, setImageFUploading] = useState(null);
   const [imageFError, setImageFError] = useState(null);
-  console.log(imageFUploading, imageFError);
+  const [formData, setFormData] = useState({});
 
   const { currentUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
   const avatarRef = useRef(null);
   // handliing image selecting
@@ -63,6 +72,7 @@ function Dashprofile() {
     //}
     //}
     //}
+    setLoading(true);
     setImageFError(null);
     const storage = getStorage(app);
     const fileName = new Date().getTime() + imageF.name;
@@ -81,23 +91,66 @@ function Dashprofile() {
         setImageFUploading(null);
         setImageFile(null);
         setImageFileUrl(null);
+        setLoading(false);
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           setImageFileUrl(downloadURL);
+
+          setFormData({ ...formData, avatar: downloadURL });
+          setLoading(false);
         });
       }
     );
   };
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setUpdateUserErr(null);
+    setUpdateUserS(null);
+    if (Object.keys(formData).length === 0) {
+      setUpdateUserErr("No changes made");
+      return;
+    }
+    if (loading) {
+      setLoading("please wait for image to upload");
+      return;
+    }
+    try {
+      dispatch(updateUserStart());
+      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setLoading(data.message);
+
+        dispatch(updateUserFaliure(data.message));
+      } else {
+        dispatch(updateUserSuccess(data));
+        setUpdateUserS("User profile updates successfully !");
+      }
+    } catch (error) {
+      dispatch(updateUserFaliure(error.message));
+      setLoading(error.message);
+    }
+  };
+  console.log(formData);
   return (
-    <div className=" w-full">
+    <div className=" w-full ">
       <h1 className=" text-center  text-3xl font-serif sm:pt-10 pt-5 font-bold">
         PROFILE
       </h1>{" "}
-      <div className="flex flex-col items-center justify-center sm:flex-row max-w-7xl mx-auto px-5 md:px-0 sm:py-20 gap-3 ">
+      <div className="flex flex-col items-center justify-center lg:flex-row  max-w-7xl mx-auto px-5 md:px-0 sm:py-20 gap-3 ">
         {/* DETAILS SECTION */}
-        <div className=" flex sm:w-[400px]  flex-col  gap-5  rounded-lg border-[2px] border-gray-400  dark:border-purple-400 px-4 sm:my-0 my-12 pt-24">
+        <div className=" flex md:w-[400px] w-full  flex-col  gap-5  rounded-lg border-[2px] border-gray-400  dark:border-purple-400 px-4 sm:my-0 my-12 pt-24">
           <div className=" w-full flex items-center justify-center flex-col relative ">
             {" "}
             <div
@@ -179,8 +232,10 @@ function Dashprofile() {
         {/* Edit profile section */}
 
         {editp && (
-          <div className="flex flex-1 w-full sm:py-0 py-10">
-            <form className=" flex flex-col gap-4 w-full">
+          <div className="flex flex-1 w-full sm:py-0 lg:px-0 px-3 py-10">
+            <form
+              className=" flex flex-col gap-4 w-full"
+              onSubmit={handleSubmit}>
               <h1 className=" text-center text-2xl font-semibold  font-serif pb-2 ">
                 Edit Profile
               </h1>
@@ -203,6 +258,7 @@ function Dashprofile() {
                   type="text"
                   id="username"
                   defaultValue={currentUser.username}
+                  onChange={handleChange}
                 />
               </div>
               <div>
@@ -212,6 +268,7 @@ function Dashprofile() {
                   type="email"
                   id="email"
                   defaultValue={currentUser.email}
+                  onChange={handleChange}
                 />
               </div>{" "}
               <div>
@@ -221,6 +278,7 @@ function Dashprofile() {
                   type="bio"
                   id="bio"
                   defaultValue={currentUser.bio}
+                  onChange={handleChange}
                 />
               </div>
               <div>
@@ -230,6 +288,7 @@ function Dashprofile() {
                   type="password"
                   id="password"
                   placeholder="***************"
+                  onChange={handleChange}
                 />
               </div>
               <Button
@@ -245,6 +304,16 @@ function Dashprofile() {
                   "Update"
                 )}
               </Button>
+              {updateUserErr && (
+                <Alert color="failure" className="my-3 ">
+                  {updateUserErr}
+                </Alert>
+              )}
+              {updateUserS && (
+                <Alert color="success" className="my-3 ">
+                  {updateUserS}
+                </Alert>
+              )}
             </form>
           </div>
         )}

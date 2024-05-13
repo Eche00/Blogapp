@@ -36,34 +36,34 @@ export const updateUser = async (req, res, next) => {
         errorHandler(400, "username contains only letters and numbers")
       );
     }
-    if (req.body.bio) {
-      if (req.body.bio.length < 20 || req.body.bio.length > 100) {
-        return next(
-          errorHandler(
-            400,
-            "Username must be at least min of 20 & max of 100 characters"
-          )
-        );
-      }
-    }
-    try {
-      const updateUser = await User.findByIdAndUpdate(
-        req.params.userId,
-        {
-          $set: {
-            username: req.body.username,
-            bio: req.body.bio,
-            email: req.body.email,
-            password: req.body.password,
-            avatar: req.body.avatar,
-          },
-        },
-        { new: true }
+  }
+  if (req.body.bio) {
+    if (req.body.bio.length < 20 || req.body.bio.length > 100) {
+      return next(
+        errorHandler(
+          400,
+          "Username must be at least min of 20 & max of 100 characters"
+        )
       );
-      const { password, ...rest } = updateUser._doc;
-      res.status(200).json(rest);
-    } catch (error) {
-      next(error);
     }
+  }
+  try {
+    const updateUser = await User.findByIdAndUpdate(
+      req.params.userId,
+      {
+        $set: {
+          username: req.body.username,
+          bio: req.body.bio,
+          email: req.body.email,
+          password: req.body.password,
+          avatar: req.body.avatar,
+        },
+      },
+      { new: true }
+    );
+    const { password, ...rest } = updateUser._doc;
+    res.status(200).json(rest);
+  } catch (error) {
+    next(error);
   }
 };
