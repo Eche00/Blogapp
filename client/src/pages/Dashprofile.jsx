@@ -32,13 +32,12 @@ import {
   deleteUserStart,
   deleteUserSuccess,
   deleteeUserFaliure,
-  signOutUserFaliure,
   signOutUserSuccess,
-  signInStart,
 } from "../redux/user/userSlice";
+import { Link } from "react-router-dom";
 
 function Dashprofile() {
-  const [loading, setLoading] = useState(false);
+  const [loadingim, setLoading] = useState(false);
   const [updateUserS, setUpdateUserS] = useState(null);
   const [updateUserErr, setUpdateUserErr] = useState(null);
 
@@ -50,7 +49,7 @@ function Dashprofile() {
   const [formData, setFormData] = useState({});
   const [showModal, setShowModal] = useState(false);
 
-  const { currentUser, error } = useSelector((state) => state.user);
+  const { currentUser, error, loading } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   const avatarRef = useRef(null);
@@ -70,12 +69,15 @@ function Dashprofile() {
   };
   // useeffect for showing loaded image on web load
   useEffect(() => {
+    setEditp(false);
     if (imageF) {
       uploadImage();
     }
   }, [imageF]);
   // handliing uploading image to firebase
   const uploadImage = async () => {
+    setEditp(true);
+
     // service firebase.storage {
     // match /b/{bucket}/o {
     // match /{allPaths=**} {
@@ -129,7 +131,7 @@ function Dashprofile() {
       setUpdateUserErr("No changes made");
       return;
     }
-    if (loading) {
+    if (loadingim) {
       setLoading("please wait for image to upload");
       return;
     }
@@ -265,6 +267,16 @@ function Dashprofile() {
               outline>
               {editp === true ? <p>Cancel</p> : <p>Edit profile</p>}
             </Button>
+            {currentUser.isAdmin === true && editp === false && (
+              <Link to="/create-post">
+                <Button
+                  onClick={() => setEditp(!editp)}
+                  className=" mb-3 text-md font-bold w-full"
+                  gradientDuoTone="purpleToPink">
+                  Make a post
+                </Button>
+              </Link>
+            )}
           </div>
           {editp === true && (
             <div className=" flex items-center justify-between text-red-600 w-full font-bold text-sm py-2">
@@ -338,8 +350,8 @@ function Dashprofile() {
               <Button
                 gradientDuoTone="purpleToPink"
                 type="submit"
-                disabled={loading}>
-                {loading ? (
+                disabled={loadingim || loading}>
+                {loadingim ? (
                   <>
                     <Spinner size="sm" />
                     <span className=" pl-3">Loading...</span>
