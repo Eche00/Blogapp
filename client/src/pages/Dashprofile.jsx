@@ -32,6 +32,9 @@ import {
   deleteUserStart,
   deleteUserSuccess,
   deleteeUserFaliure,
+  signOutUserFaliure,
+  signOutUserSuccess,
+  signInStart,
 } from "../redux/user/userSlice";
 
 function Dashprofile() {
@@ -171,6 +174,19 @@ function Dashprofile() {
       dispatch(deleteeUserFaliure(error.message));
     }
   };
+  const handleSignOut = async () => {
+    try {
+      const res = await fetch("/api/user/signout", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        dispatch(signOutUserSuccess());
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
   return (
     <div className=" w-full ">
       <h1 className=" text-center  text-3xl font-serif sm:pt-10 pt-5 font-bold">
@@ -253,7 +269,7 @@ function Dashprofile() {
           {editp === true && (
             <div className=" flex items-center justify-between text-red-600 w-full font-bold text-sm py-2">
               <button onClick={() => setShowModal(true)}>Delete account</button>
-              <button>Logout</button>
+              <button onClick={handleSignOut}>Sign out</button>
             </div>
           )}
         </div>
