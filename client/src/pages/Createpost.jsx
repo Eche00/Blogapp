@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, FileInput, Select, TextInput } from "flowbite-react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
 function Createpost() {
+  const [formD, setFormD] = useState({});
   return (
     <div>
       <div className=" max-w-3xl mx-auto p-3 ">
