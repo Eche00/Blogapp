@@ -83,7 +83,7 @@ function Createpost() {
     }
   };
   return (
-    <div className=" h-screen">
+    <div>
       <div className=" max-w-3xl mx-auto p-3 ">
         <h1 className=" text-center  text-3xl font-serif sm:pt-10 pt-5 font-bold">
           Create Post
