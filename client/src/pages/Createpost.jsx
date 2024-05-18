@@ -11,12 +11,15 @@ import {
 import { app } from "../firebase";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import { useNavigate } from "react-router-dom";
 
 function Createpost() {
   const [formD, setFormD] = useState({});
   const [file, setFile] = useState(null);
   const [imgUpldS, setImgUpldS] = useState(null);
   const [imgUpldE, setImgUpldE] = useState(null);
+  const [pubE, setPubE] = useState(null);
+  const navigate = useNavigate();
 
   const handleImgUpload = async (e) => {
     e.preventDefault();
@@ -56,13 +59,36 @@ function Createpost() {
     }
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("/api/post/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formD),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setPubE(data.message);
+        return;
+      }
+      if (res.ok) {
+        setPubE(null);
+        navigate(`/post/${data.slug}`);
+      }
+    } catch (error) {
+      setPubE("Something went wrong");
+    }
+  };
   return (
-    <div>
+    <div className=" h-screen">
       <div className=" max-w-3xl mx-auto p-3 ">
         <h1 className=" text-center  text-3xl font-serif sm:pt-10 pt-5 font-bold">
           Create Post
         </h1>
-        <form className=" flex flex-col gap-4 my-20">
+        <form className=" flex flex-col gap-4 my-20" onSubmit={handleSubmit}>
           <div className=" flex flex-col sm:flex-row gap-4 justify-between">
             <TextInput
               type="text"
@@ -70,8 +96,12 @@ function Createpost() {
               id="title"
               className="flex-1"
               required
+              onChange={(e) => setFormD({ ...formD, title: e.target.value })}
             />
-            <Select>
+            <Select
+              onChange={(e) =>
+                setFormD({ ...formD, category: e.target.value })
+              }>
               <option value="uncategorized">Select a category</option>
               <option value="javascript">Javascript</option>
               <option value="typescript">Typescript</option>
@@ -125,6 +155,7 @@ function Createpost() {
             placeholder="Write your article..."
             className=" h-80 mb-12"
             required
+            onChange={(value) => setFormD({ ...formD, content: value })}
           />
           <Button
             type="submit"
@@ -132,6 +163,11 @@ function Createpost() {
             className=" my-12 sm:my-0">
             Publish
           </Button>
+          {pubE && (
+            <Alert color="failure" className="my-2  z-10">
+              {pubE}
+            </Alert>
+          )}
         </form>
       </div>
     </div>
