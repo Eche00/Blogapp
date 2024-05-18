@@ -6,6 +6,7 @@ import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
 import Projects from "./pages/Projects";
 import Dashboard from "./pages/Dashboard";
+import Posts from "./pages/Dashboard";
 import Head from "./components/Head";
 import Privateroute from "./components/Privateroute";
 import Adminprivateroute from "./components/Adminprivateroute";
