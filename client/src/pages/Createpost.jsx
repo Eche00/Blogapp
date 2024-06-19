@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Alert, Button, FileInput, Select, TextInput } from "flowbite-react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+//import ReactQuill from "react-quill";
+//import "react-quill/dist/quill.snow.css";
 import {
   getDownloadURL,
   getStorage,
@@ -82,6 +82,7 @@ function Createpost() {
       setPubE("Something went wrong");
     }
   };
+
   return (
     <div>
       <div className=" max-w-3xl mx-auto p-3 ">
@@ -150,13 +151,23 @@ function Createpost() {
               className=" w-full h-72 object-cover"
             />
           )}
-          <ReactQuill
+          {/*  <ReactQuill
             theme="snow"
             placeholder="Write your article..."
             className=" h-80 mb-12"
             required
             onChange={(value) => setFormD({ ...formD, content: value })}
-          />
+        />*/}
+          <textarea
+            name=""
+            id=""
+            cols="30"
+            rows="10"
+            onChange={(e) => setFormD({ ...formD, content: e.target.value })}
+            required
+            placeholder="Write your article..."
+            className=" bg-transparent border-gray-700 dark:border-gray-400 border-1"></textarea>
+
           <Button
             type="submit"
             gradientDuoTone="purpleToPink"
@@ -173,5 +184,4 @@ function Createpost() {
     </div>
   );
 }
-
 export default Createpost;
