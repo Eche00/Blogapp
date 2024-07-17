@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Table } from "flowbite-react";
+import { Button, Modal, Table } from "flowbite-react";
 import { Link } from "react-router-dom";
+import { Warning } from "@mui/icons-material";
 
 function Posts() {
   const { currentUser } = useSelector((state) => state.user);
   const [userPosts, setUserPosts] = useState([]);
   const [showMore, setShowMore] = useState(true);
+  const [modal, setModal] = useState(false);
+  const [postToDelete, setPostIdToDelete] = useState("");
 
   useEffect(() => {
     const getPosts = async () => {
@@ -43,6 +46,27 @@ function Posts() {
       }
     } catch (error) {
       console.log(error);
+    }
+  };
+  const handleDelete = async () => {
+    setModal(false);
+    try {
+      const res = await fetch(
+        `/api/post/deletepost/${postToDelete}/${currentUser._id}`,
+        {
+          method: "DELETE",
+        }
+      );
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        setUserPosts((prev) =>
+          prev.filter((post) => post._id !== postToDelete)
+        );
+      }
+    } catch (error) {
+      console.log(error.message);
     }
   };
   return (
@@ -82,7 +106,12 @@ function Posts() {
                   </Table.Cell>
                   <Table.Cell>{post.category}</Table.Cell>
                   <Table.Cell>
-                    <span className=" text-red-600 font-bold hover:underline cursor-pointer">
+                    <span
+                      className=" text-red-600 font-bold hover:underline cursor-pointer"
+                      onClick={() => {
+                        setModal(true);
+                        setPostIdToDelete(post._id);
+                      }}>
                       Delete
                     </span>
                   </Table.Cell>
@@ -104,6 +133,25 @@ function Posts() {
               Show More
             </button>
           )}
+          <Modal show={modal} onClose={() => setModal(false)} popup size="md">
+            <Modal.Header />
+            <Modal.Body>
+              <div className=" text-center text-gray-400 dark:text-gray-200 my-4 mx-auto">
+                <Warning fontSize="large" />
+                <h3 className=" font-semibold text-gray-500 dark:text-gray-400 text-lg text-center my-4">
+                  Are you sure you want to delete Post ?
+                </h3>
+                <div className="flex justify-center gap-4">
+                  <Button color="failure" onClick={handleDelete}>
+                    Yes, i'm sure
+                  </Button>
+                  <Button color="gray" onClick={() => setModal(false)}>
+                    No, cancel
+                  </Button>
+                </div>
+              </div>
+            </Modal.Body>
+          </Modal>
         </>
       ) : (
         <>

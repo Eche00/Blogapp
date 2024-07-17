@@ -11,6 +11,7 @@ import Head from "./components/Head";
 import Privateroute from "./components/Privateroute";
 import Adminprivateroute from "./components/Adminprivateroute";
 import Createpost from "./pages/Createpost";
+import Editpost from "./pages/Editpost";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           </Route>
           <Route element={<Adminprivateroute />}>
             <Route path="/create-post" element={<Createpost />} />
+            <Route path="/update-post" element={<Editpost />} />
           </Route>
         </Route>
       </Routes>
