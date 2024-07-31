@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Sidebar } from "flowbite-react";
-import { Home, Logout, PostAdd } from "@mui/icons-material";
+import { GroupOutlined, Home, Logout, PostAdd } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import { signOutUserSuccess } from "../redux/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -56,6 +56,17 @@ function Dashsidebar() {
                   labelColor="dark"
                   as="div">
                   Posts
+                </Sidebar.Item>
+              </Link>
+            )}
+            {currentUser.isAdmin && (
+              <Link to="/dashboard?tab=dashuser">
+                <Sidebar.Item
+                  active={tab === "dashuser"}
+                  icon={GroupOutlined}
+                  labelColor="dark"
+                  as="div">
+                  Users
                 </Sidebar.Item>
               </Link>
             )}

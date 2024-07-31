@@ -28,7 +28,7 @@ function App() {
           </Route>
           <Route element={<Adminprivateroute />}>
             <Route path="/create-post" element={<Createpost />} />
-            <Route path="/update-post" element={<Editpost />} />
+            <Route path="/update-post/:postId" element={<Editpost />} />
           </Route>
         </Route>
       </Routes>

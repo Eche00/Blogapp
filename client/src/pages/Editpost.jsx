@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, Button, FileInput, Select, TextInput } from "flowbite-react";
 //import ReactQuill from "react-quill";
 //import "react-quill/dist/quill.snow.css";
@@ -11,7 +11,8 @@ import {
 import { app } from "../firebase";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function Editpost() {
   const [formD, setFormD] = useState({});
@@ -20,7 +21,29 @@ function Editpost() {
   const [imgUpldE, setImgUpldE] = useState(null);
   const [pubE, setPubE] = useState(null);
   const navigate = useNavigate();
+  const { postId } = useParams();
+  const { currentUser } = useSelector((state) => state.user);
+  useEffect(() => {
+    try {
+      const getPost = async () => {
+        const res = await fetch(`/api/post/getposts?postId=${postId}`);
+        const data = await res.json();
+        if (!res.ok) {
+          console.log(data.message);
+          setPubE(data.message);
+          return;
+        }
+        if (res.ok) {
+          setPubE(null);
 
+          setFormD(data.posts[0]);
+        }
+      };
+      getPost();
+    } catch (error) {
+      console.log(error.message);
+    }
+  }, [postId]);
   const handleImgUpload = async (e) => {
     e.preventDefault();
     try {
@@ -62,13 +85,16 @@ function Editpost() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("/api/post/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formD),
-      });
+      const res = await fetch(
+        `/api/post/updatepost/${formD._id}/${currentUser._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formD),
+        }
+      );
       const data = await res.json();
       if (!res.ok) {
         setPubE(data.message);
@@ -76,7 +102,7 @@ function Editpost() {
       }
       if (res.ok) {
         setPubE(null);
-        navigate(`/post/${data.slug}`);
+        navigate(`/post${data.slug}`);
       }
     } catch (error) {
       setPubE("Something went wrong");
@@ -87,7 +113,7 @@ function Editpost() {
     <div>
       <div className=" max-w-3xl mx-auto p-3 ">
         <h1 className=" text-center  text-3xl font-serif sm:pt-10 pt-5 font-bold">
-          Create Post
+          Edit Post
         </h1>
         <form className=" flex flex-col gap-4 my-20" onSubmit={handleSubmit}>
           <div className=" flex flex-col sm:flex-row gap-4 justify-between">
@@ -97,12 +123,12 @@ function Editpost() {
               id="title"
               className="flex-1"
               required
+              value={formD.title}
               onChange={(e) => setFormD({ ...formD, title: e.target.value })}
             />
             <Select
-              onChange={(e) =>
-                setFormD({ ...formD, category: e.target.value })
-              }>
+              onChange={(e) => setFormD({ ...formD, category: e.target.value })}
+              value={formD.category}>
               <option value="uncategorized">Select a category</option>
               <option value="javascript">Javascript</option>
               <option value="typescript">Typescript</option>
@@ -166,13 +192,14 @@ function Editpost() {
             onChange={(e) => setFormD({ ...formD, content: e.target.value })}
             required
             placeholder="Write your article..."
-            className=" bg-transparent border-gray-700 dark:border-gray-400 border-1"></textarea>
+            className=" bg-transparent border-gray-700 dark:border-gray-400 border-1"
+            value={formD.content}></textarea>
 
           <Button
             type="submit"
             gradientDuoTone="purpleToPink"
             className=" my-12 sm:my-0">
-            Publish
+            Update Post
           </Button>
           {pubE && (
             <Alert color="failure" className="my-2  z-10">

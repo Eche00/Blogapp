@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Dashprofile from "./Dashprofile";
 import Dashsidebar from "./Dashsidebar";
+import Dashuser from "./Dashuser";
+
 import Posts from "./Posts";
 
 function Dashboard() {
@@ -31,6 +33,10 @@ function Dashboard() {
       {
         // posts tab
         tab === "posts" && <Posts />
+      }
+      {
+        // users tab
+        tab === "dashuser" && <Dashuser />
       }
     </div>
   );
