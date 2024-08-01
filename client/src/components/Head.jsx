@@ -7,7 +7,7 @@ function Head() {
   return (
     <div className=" flex flex-col  ">
       <Header />
-      <div className="sm:h-screen h-fit ">
+      <div className="sm:pb-5 pb-0">
         <Outlet />
       </div>
       <Footer />

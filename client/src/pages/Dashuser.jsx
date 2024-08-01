@@ -49,19 +49,15 @@ function Dashuser() {
   const handleDelete = async () => {
     setModal(false);
     try {
-      const res = await fetch(
-        `/api/post/deletepost/${postToDelete}/${currentUser._id}`,
-        {
-          method: "DELETE",
-        }
-      );
+      const res = await fetch(`/api/user/delete/${userToDelete}`, {
+        method: "DELETE",
+      });
       const data = await res.json();
       if (!res.ok) {
         console.log(data.message);
       } else {
-        setUserPosts((prev) =>
-          prev.filter((post) => post._id !== postToDelete)
-        );
+        setUsers((prev) => prev.filter((user) => user._id !== userToDelete));
+        setModal(false);
       }
     } catch (error) {
       console.log(error.message);
@@ -81,7 +77,7 @@ function Dashuser() {
               <Table.HeadCell>DELETE</Table.HeadCell>
             </Table.Head>
             {users.map((user) => (
-              <Table.Body className=" divide-y">
+              <Table.Body className=" divide-y" key={user._id}>
                 <Table.Row className=" bg-white  dark:bg-gray-800 dark:border-gray-700 ">
                   <Table.Cell>
                     {new Date(user.createdAt).toLocaleDateString()}
