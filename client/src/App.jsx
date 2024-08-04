@@ -12,10 +12,12 @@ import Adminprivateroute from "./components/Adminprivateroute";
 import Createpost from "./pages/Createpost";
 import Editpost from "./pages/Editpost";
 import Postpage from "./pages/Postpage";
+import Scrolltotop from "./pages/Scrolltotop";
 
 function App() {
   return (
     <BrowserRouter>
+      <Scrolltotop />
       <Routes>
         <Route path="/" element={<Head />}>
           <Route path="/" element={<Home />} />
